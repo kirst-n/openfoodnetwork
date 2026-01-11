@@ -235,3 +235,42 @@ select.changed + .ts-wrapper {
     }
   }
 }
+
+.ts-dropdown-content {
+  .no-results {
+    color: $near-black;
+    text-align: center;
+    text-transform: uppercase;
+  }
+}
+
+// A multi-select that is inactive shows selected items as greyed out and non-removable
+// Used instead of disable to ensure the form values are still submitted
+div.inactive .ts-wrapper {
+  pointer-events: none;
+
+  &.multi {
+    .ts-control {
+      background-color: $light-grey;
+
+      [data-value] {
+        background-color: $medium-light-grey;
+
+        .remove {
+          visibility: hidden;
+          width: 0;
+          padding: 0;
+        }
+      }
+
+      input {
+        font-size: $body-font-size;
+        height: auto;
+
+        &::placeholder {
+          color: $medium-grey;
+        }
+      }
+    }
+  }
+}

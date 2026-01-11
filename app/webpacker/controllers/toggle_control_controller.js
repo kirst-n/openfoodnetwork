@@ -10,7 +10,15 @@ const BUTTON_TYPES = ["submit", "button"];
 //
 export default class extends Controller {
   static targets = ["control", "content", "chevron"];
-  static values = { selector: String, match: String };
+  static values = { selector: String, match: String, selected: String };
+
+  selectedValueChanged() {
+    this.#toggleClass(this.controlTargets, target => target.dataset.toggleControlValue !== this.selectedValue);
+  }
+
+  updateSelected(event) {
+    this.selectedValue = event.target.value;
+  }
 
   disableIfPresent(event) {
     const present = !!this.#inputValue(event.currentTarget); // Coerce value to boolean
@@ -53,6 +61,11 @@ export default class extends Controller {
   }
 
   // private
+
+  #toggleClass(targets, force) {
+    const className = this.element.dataset.toggleControlClass;
+    targets.forEach(target =>target.classList.toggle(className, force(target)));
+  }
 
   #toggleDisabled(disable) {
     this.controlTargets.forEach((target) => {

@@ -18,6 +18,7 @@ module Admin
     before_action :require_enterprise, only: [:edit, :update]
     before_action :load_methods_and_fees, only: [:edit, :update]
     before_action :load_groups, only: [:new, :edit, :update, :create]
+    before_action :load_producers, only: [:new, :edit, :update, :create]
     before_action :load_taxons, only: [:new, :edit, :update, :create]
     before_action :check_can_change_sells, only: :update
     before_action :check_can_change_bulk_sells, only: :bulk_update
@@ -71,6 +72,12 @@ module Admin
       update_vouchers
 
       delete_custom_tab if params[:custom_tab] == 'false'
+
+      %i[preferred_shopfront_taxon_order preferred_shopfront_producer_order].each do |pref|
+        if enterprise_params[pref].is_a?(Array)
+          enterprise_params[pref] = enterprise_params[pref].join(',')
+        end
+      end
 
       if @object.update(enterprise_params)
         flash[:success] = flash_success_message
@@ -297,6 +304,12 @@ module Admin
 
     def load_taxons
       @taxons = Spree::Taxon.order(:name)
+      @taxon_options = @taxons.map { |t| [t.name, t.id] }
+    end
+
+    def load_producers
+      @producers = Enterprise.where(is_primary_producer: true).order(:name)
+      @producer_options = @producers.map { |p| [p.name, p.id] }
     end
 
     def update_tag_rules(tag_rules_attributes)

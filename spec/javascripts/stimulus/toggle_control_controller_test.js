@@ -216,4 +216,37 @@ describe("ToggleControlController", () => {
       expect(chevron.className).toBe("icon-chevron-down");
     });
   });
+
+  describe("#updateSelected + #selectedValueChanged with radio buttons", () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-controller="toggle-control" data-toggle-control-class="inactive">
+          <input type="radio" name="option" value="match" id="radio1" data-action="change->toggle-control#updateSelected change->toggle-control#selectedValueChanged">
+          <input type="radio" name="option" value="other" id="radio2" data-action="change->toggle-control#updateSelected change->toggle-control#selectedValueChanged">
+
+          <div id="control1" data-toggle-control-target="control" data-toggle-control-value="match"></div>
+          <div id="control2" data-toggle-control-target="control" data-toggle-control-value="other"></div>
+        </div>
+      `;
+    });
+
+    it("adds class to controls whose value does not match selectedValue when a radio button is selected", () => {
+      const radio1 = document.getElementById("radio1");
+      const radio2 = document.getElementById("radio2");
+      const control1 = document.getElementById("control1");
+      const control2 = document.getElementById("control2");
+
+      radio1.checked = true;
+      radio1.dispatchEvent(new Event("change"));
+
+      expect(control1.classList.contains("inactive")).toBe(false);
+      expect(control2.classList.contains("inactive")).toBe(true);
+
+      radio2.checked = true;
+      radio2.dispatchEvent(new Event("change"));
+
+      expect(control1.classList.contains("inactive")).toBe(true);
+      expect(control2.classList.contains("inactive")).toBe(false);
+    });
+  });
 });

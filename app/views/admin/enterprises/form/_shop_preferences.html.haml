@@ -9,23 +9,26 @@
     = f.hidden_field :preferred_shopfront_closed_message, id: "enterprise_preferred_shopfront_closed_message"
     %trix-editor{ input: "enterprise_preferred_shopfront_closed_message", "data-controller": "trixeditor", placeholder: t('.shopfront_closed_message_placeholder') }
 
-.row
-  .text-normal
-    = t('.display_ordering_in_shopfront')
-    %br
-    = t('.shopfront_category_ordering_note')
-.row
-  .three.columns.alpha
-    = radio_button :enterprise, :preferred_shopfront_product_sorting_method, :by_category, { 'ng-model' => 'Enterprise.preferred_shopfront_product_sorting_method' }
-    = label :enterprise, :preferred_shopfront_product_sorting_method_by_category, t('.shopfront_sort_by_category')
-  .eight.columns.omega
-    %textarea.fullwidth{ id: 'enterprise_preferred_shopfront_taxon_order', name: 'enterprise[preferred_shopfront_taxon_order]', rows: 6, "ofn-taxon-autocomplete": '', "multiple-selection": 'true', placeholder: t('.shopfront_sort_by_category_placeholder'), "ng-model": 'Enterprise.preferred_shopfront_taxon_order', "ng-readonly": "Enterprise.preferred_shopfront_product_sorting_method != 'by_category'" }
-.row
-  .three.columns.alpha
-    = radio_button :enterprise, :preferred_shopfront_product_sorting_method, :by_producer, { 'ng-model' => 'Enterprise.preferred_shopfront_product_sorting_method' }
-    = label :enterprise, :preferred_shopfront_product_sorting_method_by_producer, t('.shopfront_sort_by_producer')
-  .eight.columns.omega
-    %textarea.fullwidth{ id: 'enterprise_preferred_shopfront_producer_order', name: 'enterprise[preferred_shopfront_producer_order]', rows: 6, "ofn-producer-autocomplete": '', "multiple-selection": 'true', placeholder: t('.shopfront_sort_by_producer_placeholder'), "ng-model": 'Enterprise.preferred_shopfront_producer_order', "ng-readonly": "Enterprise.preferred_shopfront_product_sorting_method != 'by_producer'" }
+%div{ data: { controller: "toggle-control", "toggle-control-class": "inactive", "toggle-control-selected-value": @enterprise.preferred_shopfront_product_sorting_method } }
+  .row
+    .text-normal
+      = t('.display_ordering_in_shopfront')
+      %br
+      = t('.shopfront_category_ordering_note')
+  .row
+    .three.columns.alpha
+      = f.radio_button :preferred_shopfront_product_sorting_method, 'by_category', id: 'by_category', data: { action: "change->toggle-control#updateSelected" }
+      = f.label :preferred_shopfront_product_sorting_method_by_category, t('.shopfront_sort_by_category')
+    .eight.columns.omega{ data: { "toggle-control-target": "control", "toggle-control-value": "by_category" }}
+      = select_tag "enterprise[preferred_shopfront_taxon_order][]", options_for_select(@taxons.map { |t| [t.name, t.id] }, (@enterprise.preferred_shopfront_taxon_order || "").split(",")), multiple: true, class: "fullwidth",
+        data: { controller: "tom-select", "tom-select-placeholder-value": t('.shopfront_sort_by_category_placeholder'), "tom-select-load-on-focus-value": true, "tom-select-options-value": { plugins: ['remove_button', 'drag_drop'], maxItems: nil, hidePlaceholder: true, closeAfterSelect: true } }
+  .row
+    .three.columns.alpha
+      = f.radio_button :preferred_shopfront_product_sorting_method, 'by_producer', id: 'by_producer', data: { action: "change->toggle-control#updateSelected" }
+      = f.label :preferred_shopfront_product_sorting_method_by_producer, t('.shopfront_sort_by_producer')
+    .eight.columns.omega{ data: { "toggle-control-target": "control", "toggle-control-value": "by_producer" }}
+      = select_tag "enterprise[preferred_shopfront_producer_order][]", options_for_select(@producers.map { |p| [p.name, p.id] }, (@enterprise.preferred_shopfront_producer_order || "").split(",")), multiple: true, class: "fullwidth",
+        data: { controller: "tom-select", "tom-select-placeholder-value": t('.shopfront_sort_by_producer_placeholder'), "tom-select-load-on-focus-value": true, "tom-select-options-value": { plugins: ['remove_button', 'drag_drop'], maxItems: nil, hidePlaceholder: true, closeAfterSelect: true } }
 
 .row
   .three.columns.alpha
