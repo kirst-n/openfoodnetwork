@@ -9,8 +9,12 @@ const BUTTON_TYPES = ["submit", "button"];
 // 3. The related control(s) are changed state
 //
 export default class extends Controller {
-  static targets = ["control", "content", "chevron"];
+  static targets = ["control", "content", "chevron", "source"];
   static values = { selector: String, match: String, selected: String };
+
+  connect() {
+    this.updateWarningVisibility();
+  }
 
   selectedValueChanged() {
     this.#toggleClass(this.controlTargets, target => target.dataset.toggleControlValue !== this.selectedValue);
@@ -18,6 +22,11 @@ export default class extends Controller {
 
   updateSelected(event) {
     this.selectedValue = event.target.value;
+  }
+
+  updateWarningVisibility() {
+    const forceAddClass = !this.#allSelectedTrue();
+    this.#toggleClass(this.contentTargets, () => forceAddClass);
   }
 
   disableIfPresent(event) {
@@ -97,5 +106,11 @@ export default class extends Controller {
     const control = this.controlTargets[0];
     const isButton = BUTTON_TYPES.includes(control.type);
     if (!isButton) control.focus();
+  }
+
+  #allSelectedTrue() {
+    return this.sourceTargets
+      .filter(i => i.checked)
+      .every(i => i.value === "true")
   }
 }

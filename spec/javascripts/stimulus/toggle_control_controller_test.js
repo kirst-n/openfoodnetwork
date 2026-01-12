@@ -249,4 +249,33 @@ describe("ToggleControlController", () => {
       expect(control2.classList.contains("inactive")).toBe(false);
     });
   });
+
+  describe("#updateWarningVisibility", () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div data-controller="toggle-control" data-toggle-control-class="warning">
+          <input type="checkbox" data-toggle-control-target="source" checked value="true" data-action="change->toggle-control#updateWarningVisibility">
+          <input type="checkbox" data-toggle-control-target="source" value="false" data-action="change->toggle-control#updateWarningVisibility">
+          <div id="content" data-toggle-control-target="content" class="warning" ></div>
+        </div>
+      `;
+    });
+
+    it("removes the warning class when all sources are true", () => {
+      const content = document.getElementById("content");
+
+      expect(content.classList.contains("warning")).toBe(false);
+    });
+
+    it("adds the warning class when not all sources are true", () => {
+      const element = document.querySelector("[data-controller='toggle-control']");
+      const secondCheckbox = element.querySelectorAll("[data-toggle-control-target='source']")[1];
+      const content = document.getElementById("content");
+
+      secondCheckbox.checked = true;
+      secondCheckbox.dispatchEvent(new Event("change"));
+
+      expect(content.classList.contains("warning")).toBe(true);
+    });
+  });
 });
